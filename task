@@ -1,0 +1,57 @@
+import re
+def evaluate_password(password):
+    score = 0
+    feedback = []
+
+    # Check length
+    if len(password) >= 8:
+        score += 1
+    else:
+        feedback.append("Increase password length to at least 8 characters.")
+
+    # Check uppercase letters
+    if re.search(r"[A-Z]", password):
+        score += 1
+    else:
+        feedback.append("Add at least one uppercase letter.")
+    # Check lowercase letters
+    if re.search(r"[a-z]", password):
+        score += 1
+    else:
+        feedback.append("Add at least one lowercase letter.")
+
+    # Check numbers
+    if re.search(r"[0-9]", password):
+        score += 1
+    else:
+        feedback.append("Add at least one number.")
+
+    # Check special characters
+    if re.search(r"[^A-Za-z0-9]", password):
+        score += 1
+    else:
+        feedback.append("Add at least one special character (!, @, #, $, etc.).")
+
+    # Classify password strength
+    if score <= 2:
+        strength = "Weak"
+    elif score <= 4:
+        strength = "Moderate"
+    else:
+        strength = "Strong"
+
+    return strength, feedback
+
+# Main Program
+password = input("Enter your password: ")
+
+strength, feedback = evaluate_password(password)
+
+print("\nPassword Strength:", strength)
+
+if feedback:
+    print("\nSuggestions to improve your password:")
+    for suggestion in feedback:
+        print("-", suggestion)
+else:
+    print("Excellent! Your password meets all security requirements.")
