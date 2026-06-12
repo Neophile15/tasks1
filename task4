@@ -1,0 +1,66 @@
+import re
+
+def analyze_email(email_text):
+    risk_score = 0
+    warnings = []
+
+    # Urgent or threatening phrases
+    urgent_phrases = [
+        "urgent", "immediately", "act now",
+        "verify your account", "account suspended",
+        "limited time", "payment required",
+        "your account will be closed"
+    ]
+
+    # Sensitive information requests
+    sensitive_keywords = [
+        "password", "credit card", "bank account",
+        "otp", "social security number",
+        "pin", "login credentials"
+    ]
+
+    # Check for urgent phrases
+    for phrase in urgent_phrases:
+        if phrase.lower() in email_text.lower():
+            risk_score += 2
+            warnings.append(f"Urgent phrase detected: '{phrase}'")
+
+    # Check for sensitive data requests
+    for keyword in sensitive_keywords:
+        if keyword.lower() in email_text.lower():
+            risk_score += 3
+            warnings.append(f"Sensitive information request detected: '{keyword}'")
+
+    # Detect links
+    links = re.findall(r'https?://[^\s]+', email_text)
+
+    if links:
+        risk_score += len(links)
+        warnings.append(f"Found {len(links)} link(s) in the email.")
+
+    # Classification
+    if risk_score >= 8:
+        status = "HIGH RISK"
+    elif risk_score >= 4:
+        status = "SUSPICIOUS"
+    else:
+        status = "SAFE"
+
+    return status, risk_score, warnings
+
+
+# Main Program
+email_content = input("Paste the email content:\n")
+
+status, score, warnings = analyze_email(email_content)
+
+print("\n----- Email Security Report -----")
+print("Risk Score:", score)
+print("Classification:", status)
+
+if warnings:
+    print("\nWarnings:")
+    for warning in warnings:
+        print("-", warning)
+else:
+    print("\nNo suspicious indicators detected.")
